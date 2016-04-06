@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Consumer Complaint Database - 2015</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.3.5.5.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/WDI_country.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.js"></script>
+
+    <script type="text/javascript">
+
+function response(){
+  switch(this.id){
+    case "NR": return "Company chooses not to provide a public response";
+    case "TP": return "Company believes complaint caused principally by actions of third party outside the control or direction of the company";
+    case "APR": return "Company believes it acted appropriately as authorized by contract or law";
+    case "OP": return "Company believes complaint represents an opportunity for improvement to better serve consumers";
+    case "MIS": return "Company believes the complaint is the result of a misunderstanding";
+    case "CVD": return "Company can't verify or dispute the facts in the complaint";
+    case "DIS": return "Company disputes the facts presented in the complaint";
+    case "ERR": return "Company believes complaint is the result of an isolated error";
+    case "PAS": return "Company believes complaint relates to a discontinued policy or procedure";
+  };
+  return this.id;
+}
+
+$(document).ready( function(){
+  var dateFormat = d3.time.format("%m-%b-%Y");
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    leftPanelLabelWidth: 170,
+    barChartWidth: 125,
+    itemName: "WDI Country",
+    categoryTextWidth: 200,
+    source: {
+      url: 'http://data.worldbank.org/data-catalog/world-development-indicators',
+      dirPath: 'data/',
+      fileType: 'csv',
+      tables: "WDI_Country",
+      callback: function(){
+        World_Countries.loadGeo();
+        browser.loadCharts();
+      }
+    },
+    summaries: [
+      { name: "Currency Unit" },
+      {name: "Region"},
+      {name: "Income Group"},
+      { name: "Special Notes", panel: "middle"},
+      { name: "Short Name", panel: "middle",
+        catLabel: function(){ return getCountryName(this.id); },
+        catMap:   function(){ 
+          var country = World_Countries.index_code[this.id];
+          if(country) return country.geo;
+        },
+        viewAs: "map"
+      },
+      { name: "Issue", panel:"right"}
+      // { name: "Sub-issue", panel: "right"},
+      // { name: "Date Received", panel: "middle",
+      //   value: function(){
+      //     var str = this["Date received"]+"-2015";
+      //     return dateFormat.parse(str);
+      //   }}
+    ]
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">
+        <a href="http://www.consumerfinance.gov/complaintdatabase" target='_blank'>Consumer Complaint Database</a>
+         , 01/01/2015 ... 27/08/2015</div>
+      <div id="demo_Browser"></div>
+
+      
+    </div>
+
+    <div id="demo_Infobox">
+      Data from 
+      <a href="http://www.consumerfinance.gov/complaintdatabase" target="_blank">Consumer Complaint Database</a>, 
+      by <a href="http://www.consumerfinance.gov/" target="_blank">Consumer Financial Protection Bureau</a>.
+      </div>
+
+  </body>
+</html>
